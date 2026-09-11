@@ -1,0 +1,43 @@
+name: Deploy MCT Hub
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "src/**"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Upload static website files
+        uses: azure/cli@v2
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+        with:
+          inlineScript: |
+            set -euo pipefail
+            az storage blob upload \
+              --connection-string "$AZURE_STORAGE_CONNECTION_STRING" \
+              --container-name '$web' \
+              --name index.html \
+              --file src/index.html \
+              --overwrite true \
+              --content-type 'text/html; charset=utf-8'
+            az storage blob upload \
+              --connection-string "$AZURE_STORAGE_CONNECTION_STRING" \
+              --container-name '$web' \
+              --name mcthub-logo.png \
+              --file src/mcthub-logo.png \
+              --overwrite true \
+              --content-type 'image/png'

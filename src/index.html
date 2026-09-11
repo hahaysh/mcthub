@@ -1,0 +1,1459 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCT Hub</title>
+  <script>
+    (() => {
+      const param = new URLSearchParams(window.location.search).get("scoutTheme");
+      const theme =
+        param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <style>
+    :root {
+      color-scheme: light;
+      --cp-bg: #f7f4ef;
+      --cp-bg-elevated: #fcfbf8;
+      --cp-surface: #ffffff;
+      --cp-surface-soft: #f5f5f5;
+      --cp-border: #dedede;
+      --cp-border-strong: #919191;
+      --cp-text: #242424;
+      --cp-text-muted: #5c5c5c;
+      --cp-text-soft: #6f6f6f;
+      --cp-accent: #b11f4b;
+      --cp-accent-hover: #9a1a41;
+      --cp-accent-soft: rgba(177, 31, 75, 0.08);
+      --cp-accent-fg: #ffffff;
+      --cp-success: #16a34a;
+      --cp-danger: #dc2626;
+      --cp-warning: #f59e0b;
+      --cp-link: #0078d4;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+      --cp-overlay: rgba(255, 255, 255, 0.8);
+      --cp-panel: rgba(255, 255, 255, 0.86);
+      --cp-panel-strong: rgba(255, 255, 255, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.55);
+      --cp-highlight: rgba(177, 31, 75, 0.12);
+    }
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --cp-bg: #3d3b3a;
+      --cp-bg-elevated: #343231;
+      --cp-surface: #292929;
+      --cp-surface-soft: #2e2e2e;
+      --cp-border: #474747;
+      --cp-border-strong: #5f5f5f;
+      --cp-text: #dedede;
+      --cp-text-muted: #919191;
+      --cp-text-soft: #b0b0b0;
+      --cp-accent: #fd8ea1;
+      --cp-accent-hover: #fb7b91;
+      --cp-accent-soft: rgba(253, 142, 161, 0.14);
+      --cp-accent-fg: #1a1a1a;
+      --cp-success: #4ade80;
+      --cp-danger: #f87171;
+      --cp-warning: #fbbf24;
+      --cp-link: #4da6ff;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+      --cp-overlay: rgba(41, 41, 41, 0.88);
+      --cp-panel: rgba(41, 41, 41, 0.72);
+      --cp-panel-strong: rgba(41, 41, 41, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.04);
+      --cp-highlight: rgba(253, 142, 161, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, var(--cp-accent-soft), transparent 34rem),
+        linear-gradient(180deg, var(--cp-bg-elevated), var(--cp-bg));
+      color: var(--cp-text);
+      font-family: "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .app {
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      min-height: 100vh;
+      width: min(960px, 100%);
+      margin: 0 auto;
+      padding: 28px 24px;
+      gap: 16px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 22px;
+      border: 1px solid var(--cp-border);
+      border-radius: 24px;
+      background: var(--cp-panel-strong);
+      box-shadow: 0 0 2px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.14);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      background: var(--cp-surface);
+      overflow: hidden;
+      border: 1px solid var(--cp-border);
+      box-shadow: inset 0 0 0 1px var(--cp-sheen);
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 56px);
+      line-height: 1.15;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin: 4px 0 0;
+      color: var(--cp-text-muted);
+      font-size: clamp(14px, 2vw, 18px);
+    }
+
+    .notice {
+      display: grid;
+      gap: 6px;
+      padding: 8px 12px;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-panel);
+      color: var(--cp-text);
+      font-size: 12px;
+      line-height: 1.35;
+      box-shadow: 0 0 2px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.14);
+    }
+
+    .notice strong {
+      color: var(--cp-accent);
+    }
+
+    .official-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .official-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 2px 7px;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-surface);
+      text-decoration: none;
+      font-size: 12px;
+    }
+
+    .official-links a:hover {
+      border-color: var(--cp-accent);
+      background: var(--cp-accent-soft);
+    }
+
+    .language {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--cp-text-muted);
+      font-size: 14px;
+    }
+
+    select {
+      min-height: 36px;
+      padding: 6px 10px;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-surface);
+      color: var(--cp-text);
+      font: inherit;
+    }
+
+    .chat {
+      display: flex;
+      flex-direction: column;
+      min-height: 420px;
+      border: 1px solid var(--cp-border);
+      border-radius: 24px;
+      background: var(--cp-panel-strong);
+      box-shadow: 0 0 2px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.14);
+      overflow: hidden;
+    }
+
+    .progress {
+      position: relative;
+      height: 3px;
+      margin: 0 0 12px;
+      border-radius: 999px;
+      background: var(--cp-surface-soft);
+      overflow: hidden;
+    }
+
+    .progress[hidden] {
+      display: none;
+    }
+
+    .progress::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      width: 42%;
+      background: var(--cp-accent);
+      animation: progress-slide 1.15s ease-in-out infinite;
+    }
+
+    @keyframes progress-slide {
+      0% {
+        transform: translateX(-120%);
+      }
+      100% {
+        transform: translateX(260%);
+      }
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px;
+    }
+
+    .message {
+      display: flex;
+      margin: 0 0 16px;
+    }
+
+    .message.user {
+      justify-content: flex-end;
+    }
+
+    .bubble {
+      max-width: min(720px, 88%);
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid var(--cp-border);
+      background: var(--cp-surface);
+      line-height: 1.55;
+      box-shadow: 0 0 2px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.14);
+    }
+
+    .bubble h3 {
+      margin: 4px 0 10px;
+      color: var(--cp-text);
+      font-size: 16px;
+      line-height: 1.35;
+    }
+
+    .bubble h4 {
+      margin: 12px 0 8px;
+      color: var(--cp-text);
+      font-size: 15px;
+      line-height: 1.35;
+    }
+
+    .bubble p {
+      margin: 0 0 12px;
+    }
+
+    .bubble p:last-child,
+    .bubble ul:last-child {
+      margin-bottom: 0;
+    }
+
+    .bubble ul {
+      margin: 0 0 12px;
+      padding-left: 22px;
+    }
+
+    .bubble li {
+      margin: 5px 0;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 12px 0;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-surface);
+    }
+
+    .bubble table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 520px;
+      font-size: 14px;
+    }
+
+    .bubble th,
+    .bubble td {
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--cp-border);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .bubble th {
+      background: var(--cp-accent-soft);
+      color: var(--cp-text);
+      font-weight: 700;
+    }
+
+    .bubble tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .source-ref {
+      margin-top: 8px;
+      color: var(--cp-text-muted);
+      font-size: 13px;
+    }
+
+    .user .bubble {
+      background: var(--cp-accent);
+      color: var(--cp-accent-fg);
+      border-color: var(--cp-accent);
+    }
+
+    .meta {
+      color: var(--cp-text-muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .composer {
+      border-top: 1px solid var(--cp-border);
+      padding: 18px;
+      background: var(--cp-bg-elevated);
+    }
+
+    .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .attachments {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 12px;
+    }
+
+    .attachment-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 100%;
+      padding: 6px;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-surface);
+    }
+
+    .attachment-chip img {
+      width: 42px;
+      height: 42px;
+      border-radius: 0.625rem;
+      object-fit: cover;
+      border: 1px solid var(--cp-border);
+    }
+
+    .attachment-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-accent-soft);
+      color: var(--cp-accent);
+      font-size: 20px;
+    }
+
+    .attachment-name {
+      max-width: 220px;
+      overflow: hidden;
+      color: var(--cp-text-muted);
+      font-size: 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .remove-attachment {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-surface-soft);
+      color: var(--cp-text);
+      cursor: pointer;
+    }
+
+    .paste-hint {
+      margin: 0 0 8px;
+      color: var(--cp-text-muted);
+      font-size: 12px;
+    }
+
+    .suggestion,
+    .send,
+    .reset,
+    .attach {
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-surface);
+      color: var(--cp-text);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .suggestion {
+      padding: 8px 10px;
+      font-size: 13px;
+      transition: background 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
+    }
+
+    .suggestion:hover,
+    .reset:hover,
+    .attach:hover {
+      border-color: var(--cp-border-strong);
+      background: var(--cp-accent-soft);
+    }
+
+    .suggestion:hover {
+      transform: translateY(-1px);
+    }
+
+    form {
+      display: flex;
+      gap: 8px;
+      padding: 6px;
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      background: var(--cp-surface);
+    }
+
+    textarea {
+      flex: 1;
+      resize: none;
+      min-height: 48px;
+      max-height: 160px;
+      padding: 12px;
+      border: 1px solid transparent;
+      border-radius: 0.625rem;
+      background: transparent;
+      color: var(--cp-text);
+      font: inherit;
+    }
+
+    textarea:focus {
+      outline: 2px solid var(--cp-accent-soft);
+      border-color: var(--cp-accent);
+    }
+
+    .send,
+    .reset,
+    .attach {
+      padding: 0 16px;
+      min-width: 84px;
+      transition: background 0.16s ease, border-color 0.16s ease;
+    }
+
+    .send {
+      background: var(--cp-accent);
+      color: var(--cp-accent-fg);
+      border-color: var(--cp-accent);
+      font-weight: 600;
+    }
+
+    .send:hover {
+      background: var(--cp-accent-hover);
+    }
+
+    .send:disabled,
+    .reset:disabled,
+    .attach:disabled,
+    textarea:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    input[type="file"].visually-hidden {
+      display: none;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--cp-text-muted);
+      font-size: 12px;
+      padding: 0 6px;
+    }
+
+    a {
+      color: var(--cp-link);
+    }
+
+    @media (max-width: 640px) {
+      .app {
+        padding: 14px;
+      }
+
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 18px;
+      }
+
+      .brand {
+        align-items: flex-start;
+      }
+
+      .logo {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+      }
+
+      form {
+        flex-direction: column;
+      }
+
+      .send,
+      .reset {
+        min-height: 42px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div class="brand">
+        <div class="logo">
+          <img src="mcthub-logo.png" alt="MCT Hub logo">
+        </div>
+        <div>
+          <h1>MCT Hub</h1>
+          <p id="subtitle" class="subtitle"></p>
+        </div>
+      </div>
+      <div class="language">
+        <label id="language-label" for="language"></label>
+        <select id="language">
+          <option value="ko">한국어</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="zh">中文</option>
+        </select>
+      </div>
+    </header>
+
+    <section id="notice" class="notice"></section>
+
+    <section class="chat" aria-label="MCT Hub chat">
+      <div id="messages" class="messages" aria-live="polite"></div>
+      <div class="composer">
+        <div id="suggestions" class="suggestions"></div>
+        <div id="attachments" class="attachments"></div>
+        <p id="paste-hint" class="paste-hint"></p>
+        <div id="progress" class="progress" role="progressbar" hidden></div>
+        <form id="form">
+          <input id="file-input" class="visually-hidden" type="file" accept="image/*,.pdf,.docx,.txt,.md,.csv">
+          <button id="attach" class="attach" type="button"></button>
+          <textarea id="input" rows="1"></textarea>
+          <button id="send" class="send" type="submit"></button>
+          <button id="reset" class="reset" type="button"></button>
+        </form>
+      </div>
+    </section>
+
+    <footer>
+      <span id="status"></span>
+      <span id="footer-note"></span>
+    </footer>
+  </main>
+
+  <script>
+    const TOKEN_ENDPOINT = "https://5a3ad6f3b3e74004b0a64172bf54e3.f5.environment.api.powerplatform.com/powervirtualagents/bots/5277e0cf-d132-c912-9568-38ea8322129c/directline/token?api-version=2022-03-01-preview";
+    const DIRECT_LINE_ENDPOINT = "https://unitedstates.directline.botframework.com/v3/directline";
+    const USER_ID = `web-user-${crypto.randomUUID ? crypto.randomUUID() : Date.now()}`;
+    const USER_NAME = "MCT Hub User";
+    const LOCALE_BY_LANG = { ko: "ko-KR", en: "en-US", ja: "ja-JP", zh: "zh-CN" };
+    const COPY = {
+      ko: {
+        subtitle: "Microsoft Certified Trainer Program 전용 Q&A assistant",
+        languageLabel: "언어",
+        noticeHtml: "<strong>참고:</strong> MCT Hub는 공식 Microsoft 에이전트가 아니며, AI 답변은 부정확하거나 최신 정책을 완전히 반영하지 못할 수 있습니다. 중요한 사실관계, 가격, 자격요건, 갱신 정책은 반드시 공식 채널에서 최종 확인해 주세요.",
+        officialLinksLabel: "공식 확인 채널",
+        suggestionsLabel: "추천 프롬프트",
+        inputPlaceholder: "MCT Program 관련 질문을 입력하세요",
+        attach: "첨부",
+        pasteHint: "이미지/PDF/DOCX/TXT/CSV 파일을 선택하거나 클립보드 이미지를 붙여넣을 수 있습니다. 한 번에 1개 파일이 첨부됩니다.",
+        send: "보내기",
+        reset: "새 대화",
+        footerNote: "공식 출처 기반 답변을 우선합니다.",
+        progressLabel: "응답을 생성하는 중입니다",
+        statusReady: "연결 준비 중",
+        statusConnecting: "연결 중",
+        statusConnected: "연결됨",
+        statusThinking: "응답 생성 중",
+        statusRefreshing: "연결 갱신 중",
+        statusSendFailed: "전송 실패",
+        statusConnectFailed: "연결 실패",
+        fileAttached: "파일이 첨부되었습니다.",
+        fileLimit: "파일은 한 번에 1개만 첨부할 수 있습니다.",
+        fileTypeOnly: "지원되는 파일만 첨부할 수 있습니다: 이미지, PDF, DOCX, TXT, MD, CSV.",
+        fileProcessFailed: "파일을 처리하지 못했습니다.",
+        filePrompt: "첨부한 파일을 참고해서 답변해 주세요.",
+        formatInstruction: "응답은 사용자 친화적인 형식으로 작성해 주세요. 가능하면 ✅ 결론, 🔍 세부 내용, 📌 참고/주의, 📚 참고 출처 같은 이모지 섹션 제목을 사용하고, 중요한 항목은 굵게 표시하며, 목록/표를 활용해 정리해 주세요.",
+        welcome: "안녕하세요, MCT 여러분! 👋\nMCT관련 정보가 항상 바뀌고 정보도 여기저기 많이 있어서,\n좀 편해져볼까 만든 AI Assistant입니다.\nMCT Program 관련 궁금한 점이 있거나 최신 업데이트를 확인하고 싶을 때 질문해 주세요.\n# 최신 정보는 언제나 공식채널에 있다는거 잊지 마시구요. #\nKorea MCT 페이스북 그룹에 놀러오세요! : https://www.facebook.com/groups/koreamct",
+        sendFailed: "메시지를 전송하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+        restartFailed: "새 대화를 시작하지 못했습니다. 페이지를 새로 고침해 주세요.",
+        connectFailed: "MCT Hub에 연결하지 못했습니다. Copilot Studio 게시 상태와 공개 인증 설정을 확인해 주세요.",
+        prompts: [
+          ["최신 MCT 소식", "최신 MCT 공지 사항을 요약해줘."],
+          ["MCT 갱신", "현재 MCT 갱신 요구사항을 설명해줘."],
+          ["MCT 혜택", "활성 MCT에게 제공되는 혜택은 무엇이야?"],
+          ["인증 업데이트", "최신 인증 업데이트를 요약해줘."],
+          ["Applied Skills", "MCT Program 관점에서 최신 Applied Skills 업데이트는 무엇이야?"],
+          ["MCT Lounge", "최근 MCT Lounge 주요 내용을 요약해줘."],
+          ["AI & Copilot", "MCT Program 관점에서 MCT를 위한 최신 AI 및 Copilot 리소스는 무엇이야?"],
+          ["AI Trainer Roadmap", "MCT Program 관점에서 AI trainer 학습 경로를 추천해줘."],
+          ["Course Delivery", "MCT Program 관점에서 course delivery 관련 어떤 리소스를 제공해?"],
+          ["Upcoming Changes", "예정된 MCT Program 변경 사항이 있어?"]
+        ]
+      },
+      en: {
+        subtitle: "Q&A assistant for the Microsoft Certified Trainer Program",
+        languageLabel: "Language",
+        noticeHtml: "<strong>Note:</strong> MCT Hub is not an official Microsoft agent. AI-generated answers may be inaccurate or may not fully reflect the latest policy. Always verify important facts, pricing, eligibility, and renewal requirements through official channels.",
+        officialLinksLabel: "Official channels",
+        suggestionsLabel: "Suggested prompts",
+        inputPlaceholder: "Ask an MCT Program question",
+        attach: "Attach",
+        pasteHint: "Select an image/PDF/DOCX/TXT/CSV file, or paste an image from the clipboard. One file can be attached at a time.",
+        send: "Send",
+        reset: "New chat",
+        footerNote: "Prioritizes answers grounded in official sources.",
+        progressLabel: "Generating a response",
+        statusReady: "Getting ready",
+        statusConnecting: "Connecting",
+        statusConnected: "Connected",
+        statusThinking: "Generating response",
+        statusRefreshing: "Refreshing connection",
+        statusSendFailed: "Send failed",
+        statusConnectFailed: "Connection failed",
+        fileAttached: "File attached.",
+        fileLimit: "You can attach one file at a time.",
+        fileTypeOnly: "Supported files only: images, PDF, DOCX, TXT, MD, CSV.",
+        fileProcessFailed: "I couldn't process the file.",
+        filePrompt: "Please answer using the attached file.",
+        formatInstruction: "Format the answer in a user-friendly way. Use emoji section headings such as ✅ Conclusion, 🔍 Details, 📌 Notes, and 📚 Sources where useful. Highlight key items in bold and use bullet lists or tables for readability.",
+        welcome: "Hi, I'm MCT Hub. Ask an MCT Program question or choose a suggested prompt below.",
+        sendFailed: "I couldn't send the message. Please try again in a moment.",
+        restartFailed: "I couldn't start a new chat. Please refresh the page.",
+        connectFailed: "I couldn't connect to MCT Hub. Check the Copilot Studio publishing status and public authentication settings.",
+        prompts: [
+          ["Latest MCT News", "Summarize the latest MCT announcements."],
+          ["MCT Renewal", "Explain the current MCT renewal requirements."],
+          ["MCT Benefits", "What benefits are available to active MCTs?"],
+          ["Certification Updates", "Summarize the latest certification updates."],
+          ["Applied Skills", "From the MCT Program perspective, what are the latest Applied Skills updates?"],
+          ["MCT Lounge", "Summarize recent highlights from the MCT Lounge."],
+          ["AI & Copilot", "From the MCT Program perspective, what are the latest AI and Copilot resources for MCTs?"],
+          ["AI Trainer Roadmap", "Recommend a learning path for AI trainers in the MCT program."],
+          ["Course Delivery", "From the MCT Program perspective, what resources are available for course delivery?"],
+          ["Upcoming Changes", "Are there any upcoming MCT program changes?"]
+        ]
+      },
+      ja: {
+        subtitle: "Microsoft Certified Trainer Program 専用 Q&A assistant",
+        languageLabel: "言語",
+        noticeHtml: "<strong>注意:</strong> MCT Hub は Microsoft 公式エージェントではありません。AI の回答は不正確であったり、最新ポリシーを完全に反映していない場合があります。重要な事実、価格、資格要件、更新ポリシーは必ず公式チャネルで最終確認してください。",
+        officialLinksLabel: "公式確認チャネル",
+        suggestionsLabel: "おすすめプロンプト",
+        inputPlaceholder: "MCT Program に関する質問を入力してください",
+        attach: "添付",
+        pasteHint: "画像/PDF/DOCX/TXT/CSV ファイルを選択するか、クリップボードの画像を貼り付けできます。一度に 1 ファイルを添付できます。",
+        send: "送信",
+        reset: "新しいチャット",
+        footerNote: "公式情報に基づく回答を優先します。",
+        progressLabel: "回答を生成しています",
+        statusReady: "接続準備中",
+        statusConnecting: "接続中",
+        statusConnected: "接続済み",
+        statusThinking: "回答生成中",
+        statusRefreshing: "接続を更新中",
+        statusSendFailed: "送信に失敗しました",
+        statusConnectFailed: "接続に失敗しました",
+        fileAttached: "ファイルを添付しました。",
+        fileLimit: "ファイルは一度に 1 つのみ添付できます。",
+        fileTypeOnly: "対応ファイルのみ添付できます: 画像、PDF、DOCX、TXT、MD、CSV。",
+        fileProcessFailed: "ファイルを処理できませんでした。",
+        filePrompt: "添付ファイルを参考にして回答してください。",
+        formatInstruction: "回答は読みやすく、ユーザーに親しみやすい形式で作成してください。可能であれば ✅ 結論、🔍 詳細、📌 注意、📚 出典 のような絵文字付きセクション見出しを使い、重要項目は太字、箇条書きや表で整理してください。",
+        welcome: "こんにちは、MCT の皆さん！👋\nMCT 関連情報は頻繁に変わり、情報もさまざまな場所に分散しています。\n少しでも楽に確認できるように作った AI Assistant です。\nMCT Program について知りたいことや最新アップデートを確認したいときに質問してください。\n# 最新情報は必ず公式チャネルで確認してください。 #\nKorea MCT Facebook グループにもぜひお越しください！: https://www.facebook.com/groups/koreamct",
+        sendFailed: "メッセージを送信できませんでした。しばらくしてからもう一度お試しください。",
+        restartFailed: "新しいチャットを開始できませんでした。ページを更新してください。",
+        connectFailed: "MCT Hub に接続できませんでした。Copilot Studio の公開状態と公開認証設定を確認してください。",
+        prompts: [
+          ["最新 MCT ニュース", "MCT の最新発表を要約してください。"],
+          ["MCT 更新", "現在の MCT 更新要件を説明してください。"],
+          ["MCT 特典", "アクティブな MCT が利用できる特典は何ですか？"],
+          ["認定更新", "最新の認定更新を要約してください。"],
+          ["Applied Skills", "MCT Program の観点から、最新の Applied Skills 更新は何ですか？"],
+          ["MCT Lounge", "最近の MCT Lounge のハイライトを要約してください。"],
+          ["AI & Copilot", "MCT Program の観点から、MCT 向けの最新 AI と Copilot リソースは何ですか？"],
+          ["AI Trainer Roadmap", "MCT Program の観点から、AI trainer 向けの学習パスを提案してください。"],
+          ["Course Delivery", "MCT Program の観点から、course delivery に利用できるリソースは何ですか？"],
+          ["Upcoming Changes", "今後予定されている MCT Program の変更はありますか？"]
+        ]
+      },
+      zh: {
+        subtitle: "Microsoft Certified Trainer Program 专用 Q&A assistant",
+        languageLabel: "语言",
+        noticeHtml: "<strong>注意:</strong> MCT Hub 不是 Microsoft 官方代理。AI 生成的回答可能不准确，也可能未完全反映最新政策。重要事实、价格、资格要求和续订政策请务必通过官方渠道最终确认。",
+        officialLinksLabel: "官方确认渠道",
+        suggestionsLabel: "建议提示",
+        inputPlaceholder: "请输入 MCT Program 相关问题",
+        attach: "附加",
+        pasteHint: "可以选择图片/PDF/DOCX/TXT/CSV 文件，或从剪贴板粘贴图片。一次可附加 1 个文件。",
+        send: "发送",
+        reset: "新建聊天",
+        footerNote: "优先提供基于官方来源的回答。",
+        progressLabel: "正在生成回答",
+        statusReady: "准备连接",
+        statusConnecting: "正在连接",
+        statusConnected: "已连接",
+        statusThinking: "正在生成回答",
+        statusRefreshing: "正在刷新连接",
+        statusSendFailed: "发送失败",
+        statusConnectFailed: "连接失败",
+        fileAttached: "文件已附加。",
+        fileLimit: "一次只能附加 1 个文件。",
+        fileTypeOnly: "仅支持以下文件: 图片、PDF、DOCX、TXT、MD、CSV。",
+        fileProcessFailed: "无法处理文件。",
+        filePrompt: "请参考附加文件进行回答。",
+        formatInstruction: "请使用更友好的格式回答。可使用 ✅ 结论、🔍 详细内容、📌 注意事项、📚 来源 等带表情符号的章节标题；重点内容加粗，并使用项目符号列表或表格提升可读性。",
+        welcome: "各位 MCT，大家好！👋\nMCT 相关信息经常变化，而且分散在多个地方。\n这是为了让查询更方便而创建的 AI Assistant。\n如果你想了解 MCT Program 或查看最新更新，请直接提问。\n# 最新信息请始终以官方渠道为准。 #\n欢迎加入 Korea MCT Facebook 群组！: https://www.facebook.com/groups/koreamct",
+        sendFailed: "无法发送消息。请稍后再试。",
+        restartFailed: "无法开始新的聊天。请刷新页面。",
+        connectFailed: "无法连接到 MCT Hub。请检查 Copilot Studio 发布状态和公开身份验证设置。",
+        prompts: [
+          ["最新 MCT 新闻", "请总结最新的 MCT 公告。"],
+          ["MCT 续订", "请说明当前的 MCT 续订要求。"],
+          ["MCT 福利", "有效 MCT 可以获得哪些福利？"],
+          ["认证更新", "请总结最新认证更新。"],
+          ["Applied Skills", "从 MCT Program 的角度看，最新的 Applied Skills 更新是什么？"],
+          ["MCT Lounge", "请总结最近 MCT Lounge 的重点内容。"],
+          ["AI & Copilot", "从 MCT Program 的角度看，面向 MCT 的最新 AI 和 Copilot 资源有哪些？"],
+          ["AI Trainer Roadmap", "从 MCT Program 的角度，为 AI trainer 推荐学习路径。"],
+          ["Course Delivery", "从 MCT Program 的角度看，有哪些 course delivery 相关资源？"],
+          ["Upcoming Changes", "MCT Program 是否有即将发生的变化？"]
+        ]
+      }
+    };
+    const OFFICIAL_LINKS = [
+      ["Microsoft Learn MCT", "https://learn.microsoft.com/credentials/mct-certification"],
+      ["Training Support", "https://trainingsupport.microsoft.com"],
+      ["MCT Portal", "https://prod.mct.pvue2.com/#/prelogin"],
+      ["MCT Lounge", "https://techcommunity.microsoft.com/category/MCT-Lounge"]
+    ];
+
+    const messages = document.getElementById("messages");
+    const input = document.getElementById("input");
+    const attachButton = document.getElementById("attach");
+    const fileInput = document.getElementById("file-input");
+    const form = document.getElementById("form");
+    const sendButton = document.getElementById("send");
+    const resetButton = document.getElementById("reset");
+    const status = document.getElementById("status");
+    const suggestions = document.getElementById("suggestions");
+    const subtitle = document.getElementById("subtitle");
+    const footerNote = document.getElementById("footer-note");
+    const languageLabel = document.getElementById("language-label");
+    const languageSelect = document.getElementById("language");
+    const notice = document.getElementById("notice");
+    const progress = document.getElementById("progress");
+    const attachments = document.getElementById("attachments");
+    const pasteHint = document.getElementById("paste-hint");
+
+    let token = "";
+    let conversationId = "";
+    let streamUrl = "";
+    let watermark = "";
+    let pollTimer = 0;
+    let seenActivityIds = new Set();
+    let sentTextsToIgnore = [];
+    let currentLang = resolveInitialLanguage();
+    let attachedFiles = [];
+    const MAX_ATTACHMENTS = 1;
+    const MAX_FILE_BYTES = 10 * 1024 * 1024;
+    const SUPPORTED_EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif", ".webp", ".pdf", ".docx", ".txt", ".md", ".csv"];
+    const SUPPORTED_MIME_TYPES = [
+      "image/png",
+      "image/jpeg",
+      "image/gif",
+      "image/webp",
+      "application/pdf",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "text/plain",
+      "text/markdown",
+      "text/csv",
+      "application/octet-stream"
+    ];
+
+    function resolveInitialLanguage() {
+      const param = new URLSearchParams(window.location.search).get("lang");
+      if (param && COPY[param]) return param;
+      const browserLang = (navigator.language || "").toLowerCase();
+      if (browserLang.startsWith("ko")) return "ko";
+      if (browserLang.startsWith("ja")) return "ja";
+      if (browserLang.startsWith("zh")) return "zh";
+      return "en";
+    }
+
+    function t(key) {
+      return COPY[currentLang][key];
+    }
+
+    function applyLanguage(lang) {
+      currentLang = COPY[lang] ? lang : "en";
+      document.documentElement.lang = currentLang;
+      languageSelect.value = currentLang;
+      subtitle.textContent = t("subtitle");
+      languageLabel.textContent = t("languageLabel");
+      renderNotice();
+      suggestions.setAttribute("aria-label", t("suggestionsLabel"));
+      input.placeholder = t("inputPlaceholder");
+      attachButton.textContent = t("attach");
+      pasteHint.textContent = t("pasteHint");
+      sendButton.textContent = t("send");
+      resetButton.textContent = t("reset");
+      footerNote.textContent = t("footerNote");
+      progress.setAttribute("aria-label", t("progressLabel"));
+      if (!conversationId) setStatus(t("statusReady"));
+      renderSuggestions();
+    }
+
+    function setBusy(isBusy) {
+      input.disabled = isBusy;
+      attachButton.disabled = isBusy;
+      sendButton.disabled = isBusy;
+      resetButton.disabled = isBusy;
+      progress.hidden = !isBusy;
+    }
+
+    function setStatus(text) {
+      status.textContent = text;
+    }
+
+    function escapeHtml(value) {
+      return value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function safeHttpUrl(value) {
+      try {
+        if (/[\s"'<>`]/.test(value) || /&(quot|apos|#0*3[49]|#x0*2[27]);/i.test(value)) return "";
+        const url = new URL(value);
+        return url.protocol === "https:" || url.protocol === "http:" ? url.href : "";
+      } catch {
+        return "";
+      }
+    }
+
+    function linkHtml(label, rawUrl) {
+      const safeUrl = safeHttpUrl(rawUrl);
+      if (!safeUrl) return escapeHtml(label);
+      return `<a href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>`;
+    }
+
+    function renderInline(value) {
+      return escapeHtml(value)
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s"'<>`]+)(?:\s+&quot;[^&]*&quot;)?\)/g, (_, label, url) => linkHtml(label, url))
+        .replace(/(^|[\s:])(https?:\/\/[^\s"'<>`]+)/g, (_, prefix, url) => `${prefix}${linkHtml(url, url)}`)
+        .replace(/`([^`]+)`/g, "<strong>$1</strong>")
+        .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    }
+
+    function renderMarkdown(value) {
+      const normalized = value
+        .replace(/\r\n/g, "\n")
+        .replace(/([^\n])•\s+/g, "$1\n• ")
+        .replace(/([.!?])\s+(\*\*[^*]+\*\*)/g, "$1\n\n$2");
+      const lines = normalized.split("\n");
+      const html = [];
+      let paragraph = [];
+      let list = [];
+      let table = null;
+
+      const flushParagraph = () => {
+        if (!paragraph.length) return;
+        html.push(`<p>${paragraph.join(" ")}</p>`);
+        paragraph = [];
+      };
+
+      const flushList = () => {
+        if (!list.length) return;
+        html.push(`<ul>${list.map((item) => `<li>${item}</li>`).join("")}</ul>`);
+        list = [];
+      };
+
+      const splitTableRow = (line) =>
+        line.replace(/^\s*\|?|\|?\s*$/g, "").split("|").map((cell) => cell.trim());
+
+      const isTableSeparator = (line) =>
+        /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(line);
+
+      const flushTable = () => {
+        if (!table) return;
+        const head = table.headers.map((cell) => `<th>${renderInline(cell)}</th>`).join("");
+        const body = table.rows.map((row) =>
+          `<tr>${row.map((cell) => `<td>${renderInline(cell)}</td>`).join("")}</tr>`
+        ).join("");
+        html.push(`<div class="table-wrap"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`);
+        table = null;
+      };
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) {
+          flushParagraph();
+          flushList();
+          flushTable();
+          continue;
+        }
+
+        if (line.includes("|")) {
+          const nextLine = lines[i + 1]?.trim() || "";
+          if (!table && isTableSeparator(nextLine)) {
+            flushParagraph();
+            flushList();
+            table = { headers: splitTableRow(line), rows: [] };
+            continue;
+          }
+          if (table) {
+            if (isTableSeparator(line)) continue;
+            table.rows.push(splitTableRow(line));
+            continue;
+          }
+        }
+
+        flushTable();
+
+        const hashHeading = line.match(/^(#{1,6})\s+(.+?)\s*#*$/);
+        if (hashHeading) {
+          flushParagraph();
+          flushList();
+          const tag = hashHeading[1].length <= 2 ? "h3" : "h4";
+          html.push(`<${tag}>${renderInline(hashHeading[2])}</${tag}>`);
+          continue;
+        }
+
+        const emojiHeading = line.match(/^(✅|🔍|📌|📚|⚠️|💡|📝|🎯)\s+(.+)/u);
+        if (emojiHeading) {
+          flushParagraph();
+          flushList();
+          html.push(`<h3>${emojiHeading[1]} ${renderInline(emojiHeading[2])}</h3>`);
+          continue;
+        }
+
+        const httpSource = line.match(/^\[(\d+)\]:\s+(https?:\/\/[^\s"'<>`]+)(?:\s+&quot;([^&]+)&quot;|\s+"([^"]+)")?/);
+        if (httpSource) {
+          flushParagraph();
+          flushList();
+          const label = httpSource[3] || httpSource[4] || httpSource[2];
+          html.push(`<div class="source-ref">${linkHtml(`[${httpSource[1]}] ${label}`, httpSource[2])}</div>`);
+          continue;
+        }
+
+        const internalSource = line.match(/^\[(\d+)\]:\s+(?!https?:)(.+)/);
+        if (internalSource) {
+          flushParagraph();
+          flushList();
+          const title = internalSource[2].match(/"([^"]+)"\s*$/)?.[1] || "Knowledge source";
+          html.push(`<div class="source-ref">[${internalSource[1]}] ${escapeHtml(title)}</div>`);
+          continue;
+        }
+
+        const bullet = line.match(/^(?:[-*•])\s+(.+)/);
+        if (bullet) {
+          flushParagraph();
+          list.push(renderInline(bullet[1]));
+          continue;
+        }
+
+        const heading = line.match(/^\*\*([^*]+)\*\*$/);
+        if (heading) {
+          flushParagraph();
+          flushList();
+          html.push(`<h3>${escapeHtml(heading[1])}</h3>`);
+          continue;
+        }
+
+        paragraph.push(renderInline(line));
+      }
+
+      flushParagraph();
+      flushList();
+      flushTable();
+      return html.join("");
+    }
+
+    function appendMessage(role, text) {
+      const wrapper = document.createElement("div");
+      wrapper.className = `message ${role}`;
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      if (role === "bot") {
+        bubble.innerHTML = renderMarkdown(text);
+      } else {
+        bubble.textContent = text;
+      }
+
+      wrapper.appendChild(bubble);
+      messages.appendChild(wrapper);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function appendSystem(text) {
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.textContent = text;
+      messages.appendChild(meta);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function renderAttachments() {
+      attachments.replaceChildren();
+      for (const file of attachedFiles) {
+        const chip = document.createElement("div");
+        chip.className = "attachment-chip";
+
+        let preview;
+        if (file.isImage) {
+          preview = document.createElement("img");
+          preview.src = file.previewUrl;
+          preview.alt = file.name;
+        } else {
+          preview = document.createElement("span");
+          preview.className = "attachment-icon";
+          preview.textContent = "📄";
+          preview.setAttribute("aria-hidden", "true");
+        }
+
+        const name = document.createElement("span");
+        name.className = "attachment-name";
+        name.textContent = file.name;
+
+        const remove = document.createElement("button");
+        remove.className = "remove-attachment";
+        remove.type = "button";
+        remove.textContent = "×";
+        remove.setAttribute("aria-label", `Remove ${file.name}`);
+        remove.addEventListener("click", () => {
+          attachedFiles = attachedFiles.filter((item) => item.id !== file.id);
+          renderAttachments();
+        });
+
+        chip.append(preview, name, remove);
+        attachments.appendChild(chip);
+      }
+    }
+
+    function fileToImage(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error("read failed"));
+        reader.onload = () => {
+          const img = new Image();
+          img.onerror = () => reject(new Error("image failed"));
+          img.onload = () => resolve(img);
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function isSupportedFile(file) {
+      const lowerName = file.name.toLowerCase();
+      return SUPPORTED_EXTENSIONS.some((extension) => lowerName.endsWith(extension)) || SUPPORTED_MIME_TYPES.includes(file.type);
+    }
+
+    async function normalizeImageAttachment(file) {
+      if (!file.type.startsWith("image/")) {
+        throw new Error("not image");
+      }
+
+      const image = await fileToImage(file);
+      const maxDimension = 1280;
+      const scale = Math.min(1, maxDimension / Math.max(image.width, image.height));
+      const width = Math.max(1, Math.round(image.width * scale));
+      const height = Math.max(1, Math.round(image.height * scale));
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const context = canvas.getContext("2d");
+      context.drawImage(image, 0, 0, width, height);
+
+      const contentType = file.type === "image/png" && scale === 1 ? "image/png" : "image/jpeg";
+      const contentUrl = canvas.toDataURL(contentType, 0.86);
+      const extension = contentType === "image/png" ? "png" : "jpg";
+      const baseName = file.name && file.name.includes(".") ? file.name.replace(/\.[^.]+$/, "") : (file.name || "pasted-image");
+
+      return {
+        id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+        name: `${baseName}.${extension}`,
+        contentType,
+        blob: dataUrlToBlob(contentUrl),
+        previewUrl: contentUrl,
+        isImage: true
+      };
+    }
+
+    async function normalizeAttachment(file) {
+      if (file.size > MAX_FILE_BYTES) {
+        throw new Error("too large");
+      }
+      if (!isSupportedFile(file)) {
+        throw new Error("unsupported");
+      }
+      if (file.type.startsWith("image/")) {
+        return normalizeImageAttachment(file);
+      }
+
+      return {
+        id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+        name: file.name || "attachment",
+        contentType: file.type || "application/octet-stream",
+        blob: file,
+        previewUrl: "",
+        isImage: false
+      };
+    }
+
+    async function addFiles(files) {
+      for (const file of files) {
+        if (attachedFiles.length >= MAX_ATTACHMENTS) {
+          appendSystem(t("fileLimit"));
+          break;
+        }
+        if (!isSupportedFile(file)) {
+          appendSystem(t("fileTypeOnly"));
+          continue;
+        }
+
+        try {
+          attachedFiles.push(await normalizeAttachment(file));
+          renderAttachments();
+          appendSystem(t("fileAttached"));
+        } catch {
+          appendSystem(t("fileProcessFailed"));
+        }
+      }
+    }
+
+    function renderSuggestions() {
+      suggestions.replaceChildren();
+      for (const [title, prompt] of t("prompts")) {
+        const button = document.createElement("button");
+        button.className = "suggestion";
+        button.type = "button";
+        button.textContent = title;
+        button.addEventListener("click", () => {
+          input.value = prompt;
+          input.focus();
+        });
+        suggestions.appendChild(button);
+      }
+    }
+
+    function renderNotice() {
+      const text = document.createElement("div");
+      text.innerHTML = t("noticeHtml");
+
+      const links = document.createElement("div");
+      links.className = "official-links";
+      links.setAttribute("aria-label", t("officialLinksLabel"));
+      for (const [label, href] of OFFICIAL_LINKS) {
+        const link = document.createElement("a");
+        link.href = href;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = label;
+        links.appendChild(link);
+      }
+
+      notice.replaceChildren(text, links);
+    }
+
+    function buildAgentMessage(value) {
+      const fileSuffix = attachedFiles.length ? ` ${t("filePrompt")}` : "";
+      const formatInstruction = t("formatInstruction");
+      if (currentLang === "en") {
+        return `Please answer in English. The user's question is in the context of the Microsoft Certified Trainer (MCT) Program. ${formatInstruction}${fileSuffix} User question: ${value}`;
+      }
+      if (currentLang === "ko") {
+        return `한국어로 답변해 주세요. 사용자의 질문은 Microsoft Certified Trainer(MCT) Program 맥락의 질문입니다. ${formatInstruction}${fileSuffix} 사용자 질문: ${value}`;
+      }
+      if (currentLang === "ja") {
+        return `日本語で回答してください。ユーザーの質問は Microsoft Certified Trainer (MCT) Program の文脈の質問です。${formatInstruction}${fileSuffix} ユーザーの質問: ${value}`;
+      }
+      if (currentLang === "zh") {
+        return `请用简体中文回答。用户的问题是在 Microsoft Certified Trainer (MCT) Program 的上下文中提出的。${formatInstruction}${fileSuffix} 用户问题：${value}`;
+      }
+      return value;
+    }
+
+    async function requestJson(url, options = {}) {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        throw new Error(`Request failed: ${response.status}`);
+      }
+      return response.json();
+    }
+
+    function dataUrlToBlob(dataUrl) {
+      const [header, data] = dataUrl.split(",");
+      const contentType = header.match(/data:([^;]+)/)?.[1] || "application/octet-stream";
+      const binary = atob(data);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return new Blob([bytes], { type: contentType });
+    }
+
+    async function uploadFileActivity(text, file) {
+      const activity = {
+        type: "message",
+        from: { id: USER_ID, name: USER_NAME },
+        text,
+        locale: LOCALE_BY_LANG[currentLang] || "en-US"
+      };
+      const formData = new FormData();
+      formData.append("activity", new Blob([JSON.stringify(activity)], { type: "application/vnd.microsoft.activity" }));
+      formData.append("file", file.blob, file.name);
+
+      const response = await fetch(`${DIRECT_LINE_ENDPOINT}/conversations/${conversationId}/upload?userId=${encodeURIComponent(USER_ID)}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      });
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.status}`);
+      }
+      return response.json();
+    }
+
+    async function startConversation() {
+      setBusy(true);
+      setStatus(t("statusConnecting"));
+      clearInterval(pollTimer);
+      watermark = "";
+      seenActivityIds = new Set();
+      sentTextsToIgnore = [];
+      attachedFiles = [];
+      renderAttachments();
+      messages.replaceChildren();
+
+      const tokenResponse = await requestJson(TOKEN_ENDPOINT);
+      token = tokenResponse.token;
+
+      const conversation = await requestJson(`${DIRECT_LINE_ENDPOINT}/conversations`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      conversationId = conversation.conversationId;
+      streamUrl = conversation.streamUrl || "";
+
+      appendMessage("bot", t("welcome"));
+      setStatus(t("statusConnected"));
+      setBusy(false);
+      input.focus();
+      pollTimer = setInterval(pollActivities, 1400);
+    }
+
+    async function pollActivities() {
+      if (!conversationId || !token) return;
+
+      try {
+        const query = watermark ? `?watermark=${encodeURIComponent(watermark)}` : "";
+        const data = await requestJson(`${DIRECT_LINE_ENDPOINT}/conversations/${conversationId}/activities${query}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        watermark = data.watermark || watermark;
+
+        for (const activity of data.activities || []) {
+          if (seenActivityIds.has(activity.id) || activity.from?.id === USER_ID) continue;
+          seenActivityIds.add(activity.id);
+
+          if (activity.type === "message" && activity.text) {
+            const ignoredIndex = sentTextsToIgnore.indexOf(activity.text);
+            if (ignoredIndex >= 0) {
+              sentTextsToIgnore.splice(ignoredIndex, 1);
+              continue;
+            }
+            appendMessage("bot", activity.text);
+            setBusy(false);
+            setStatus(t("statusConnected"));
+          }
+        }
+      } catch (error) {
+        setStatus(t("statusRefreshing"));
+      }
+    }
+
+    async function sendMessage(text) {
+      const value = text.trim();
+      if ((!value && attachedFiles.length === 0) || !conversationId) return;
+      const displayText = value || t("filePrompt");
+      const agentQuestion = value || t("filePrompt");
+      const agentMessage = buildAgentMessage(agentQuestion);
+      const filesToSend = attachedFiles.map(({ name, contentType, blob, isImage }) => ({
+        name,
+        contentType,
+        blob,
+        isImage
+      }));
+
+      appendMessage("user", displayText);
+      sentTextsToIgnore.push(agentMessage);
+      input.value = "";
+      attachedFiles = [];
+      renderAttachments();
+      setBusy(true);
+      setStatus(t("statusThinking"));
+
+      try {
+        if (filesToSend.length) {
+          await uploadFileActivity(agentMessage, filesToSend[0]);
+        } else {
+          await requestJson(`${DIRECT_LINE_ENDPOINT}/conversations/${conversationId}/activities`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              type: "message",
+              from: { id: USER_ID, name: USER_NAME },
+              text: agentMessage,
+              locale: LOCALE_BY_LANG[currentLang] || "en-US"
+            })
+          });
+        }
+      } catch (error) {
+        appendSystem(t("sendFailed"));
+        setBusy(false);
+        setStatus(t("statusSendFailed"));
+      }
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      sendMessage(input.value);
+    });
+
+    attachButton.addEventListener("click", () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener("change", () => {
+      addFiles([...fileInput.files]);
+      fileInput.value = "";
+    });
+
+    document.addEventListener("paste", (event) => {
+      const imageFiles = [...(event.clipboardData?.items || [])]
+        .filter((item) => item.kind === "file" && item.type.startsWith("image/"))
+        .map((item) => item.getAsFile())
+        .filter(Boolean);
+      if (imageFiles.length) {
+        event.preventDefault();
+        addFiles(imageFiles);
+      }
+    });
+
+    resetButton.addEventListener("click", () => {
+      startConversation().catch(() => {
+        appendSystem(t("restartFailed"));
+        setBusy(false);
+        setStatus(t("statusConnectFailed"));
+      });
+    });
+
+    languageSelect.addEventListener("change", () => {
+      applyLanguage(languageSelect.value);
+      if (conversationId) {
+        appendSystem(currentLang === "ko" ? "언어가 한국어로 변경되었습니다." : "Language changed to English.");
+      }
+    });
+
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        form.requestSubmit();
+      }
+    });
+
+    applyLanguage(currentLang);
+    startConversation().catch(() => {
+      appendSystem(t("connectFailed"));
+      setBusy(false);
+      setStatus(t("statusConnectFailed"));
+    });
+  </script>
+</body>
+</html>
