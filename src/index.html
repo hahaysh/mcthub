@@ -180,6 +180,47 @@
       background: var(--cp-accent-soft);
     }
 
+    .community-contact {
+      display: grid;
+      gap: 6px;
+      padding: 12px 14px;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-panel);
+      color: var(--cp-text-muted);
+      font-size: 12px;
+      line-height: 1.45;
+      box-shadow: 0 0 2px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.14);
+    }
+
+    .community-contact strong {
+      color: var(--cp-text);
+    }
+
+    .community-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+      align-items: center;
+    }
+
+    .community-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 2px 7px;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-surface);
+      text-decoration: none;
+      font-size: 12px;
+    }
+
+    .community-links a:hover {
+      border-color: var(--cp-accent);
+      background: var(--cp-accent-soft);
+    }
+
     .language {
       display: flex;
       align-items: center;
@@ -610,6 +651,8 @@
       </div>
     </section>
 
+    <section id="community-contact" class="community-contact" aria-label="Community and contact"></section>
+
     <footer>
       <span id="status"></span>
       <span id="footer-note"></span>
@@ -628,6 +671,11 @@
         languageLabel: "언어",
         noticeHtml: "<strong>참고:</strong> MCT Hub는 공식 Microsoft 에이전트가 아니며, AI 답변은 부정확하거나 최신 정책을 완전히 반영하지 못할 수 있습니다. 중요한 사실관계, 가격, 자격요건, 갱신 정책은 반드시 공식 채널에서 최종 확인해 주세요.",
         officialLinksLabel: "공식 확인 채널",
+        communityContactLabel: "커뮤니티 및 문의",
+        communityContactTitle: "커뮤니티 및 문의",
+        facebookGroupLabel: "Korea MCT Facebook 그룹",
+        contactLabel: "문의",
+        communityContactNote: "MCT Hub는 Microsoft 공식 서비스가 아닌 커뮤니티 기반 assistant입니다.",
         suggestionsLabel: "추천 프롬프트",
         inputPlaceholder: "MCT Program 관련 질문을 입력하세요",
         attach: "첨부",
@@ -671,6 +719,11 @@
         languageLabel: "Language",
         noticeHtml: "<strong>Note:</strong> MCT Hub is not an official Microsoft agent. AI-generated answers may be inaccurate or may not fully reflect the latest policy. Always verify important facts, pricing, eligibility, and renewal requirements through official channels.",
         officialLinksLabel: "Official channels",
+        communityContactLabel: "Community and contact",
+        communityContactTitle: "Community & Contact",
+        facebookGroupLabel: "Korea MCT Facebook Group",
+        contactLabel: "Contact",
+        communityContactNote: "MCT Hub is an unofficial community assistant and is not affiliated with Microsoft.",
         suggestionsLabel: "Suggested prompts",
         inputPlaceholder: "Ask an MCT Program question",
         attach: "Attach",
@@ -714,6 +767,11 @@
         languageLabel: "言語",
         noticeHtml: "<strong>注意:</strong> MCT Hub は Microsoft 公式エージェントではありません。AI の回答は不正確であったり、最新ポリシーを完全に反映していない場合があります。重要な事実、価格、資格要件、更新ポリシーは必ず公式チャネルで最終確認してください。",
         officialLinksLabel: "公式確認チャネル",
+        communityContactLabel: "コミュニティとお問い合わせ",
+        communityContactTitle: "コミュニティとお問い合わせ",
+        facebookGroupLabel: "Korea MCT Facebook グループ",
+        contactLabel: "お問い合わせ",
+        communityContactNote: "MCT Hub は Microsoft 公式サービスではなく、コミュニティベースの assistant です。",
         suggestionsLabel: "おすすめプロンプト",
         inputPlaceholder: "MCT Program に関する質問を入力してください",
         attach: "添付",
@@ -757,6 +815,11 @@
         languageLabel: "语言",
         noticeHtml: "<strong>注意:</strong> MCT Hub 不是 Microsoft 官方代理。AI 生成的回答可能不准确，也可能未完全反映最新政策。重要事实、价格、资格要求和续订政策请务必通过官方渠道最终确认。",
         officialLinksLabel: "官方确认渠道",
+        communityContactLabel: "社区和联系",
+        communityContactTitle: "社区和联系",
+        facebookGroupLabel: "Korea MCT Facebook 群组",
+        contactLabel: "联系",
+        communityContactNote: "MCT Hub 是基于社区的 assistant，并非 Microsoft 官方服务。",
         suggestionsLabel: "建议提示",
         inputPlaceholder: "请输入 MCT Program 相关问题",
         attach: "附加",
@@ -817,6 +880,7 @@
     const languageLabel = document.getElementById("language-label");
     const languageSelect = document.getElementById("language");
     const notice = document.getElementById("notice");
+    const communityContact = document.getElementById("community-contact");
     const progress = document.getElementById("progress");
     const attachments = document.getElementById("attachments");
     const pasteHint = document.getElementById("paste-hint");
@@ -867,6 +931,7 @@
       subtitle.textContent = t("subtitle");
       languageLabel.textContent = t("languageLabel");
       renderNotice();
+      renderCommunityContact();
       suggestions.setAttribute("aria-label", t("suggestionsLabel"));
       input.placeholder = t("inputPlaceholder");
       attachButton.textContent = t("attach");
@@ -1235,6 +1300,33 @@
       }
 
       notice.replaceChildren(text, links);
+    }
+
+    function renderCommunityContact() {
+      communityContact.setAttribute("aria-label", t("communityContactLabel"));
+
+      const title = document.createElement("strong");
+      title.textContent = t("communityContactTitle");
+
+      const links = document.createElement("div");
+      links.className = "community-links";
+
+      const facebook = document.createElement("a");
+      facebook.href = "https://www.facebook.com/groups/koreamct";
+      facebook.target = "_blank";
+      facebook.rel = "noopener noreferrer";
+      facebook.textContent = t("facebookGroupLabel");
+
+      const contact = document.createElement("a");
+      contact.href = "mailto:hahaysh@hotmail.com";
+      contact.textContent = `${t("contactLabel")}: hahaysh@hotmail.com`;
+
+      links.append(facebook, contact);
+
+      const note = document.createElement("div");
+      note.textContent = t("communityContactNote");
+
+      communityContact.replaceChildren(title, links, note);
     }
 
     function buildAgentMessage(value) {
